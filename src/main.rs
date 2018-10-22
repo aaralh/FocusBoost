@@ -20,6 +20,9 @@ fn read_file(fileuri: String) -> String {
     return contents;
 }
 
+fn save_file(fileuri: String, content: String) -> i8 {
+    return 1;
+}
 
 fn main() {
     let fileuri = "./src/test.txt".to_string();
@@ -36,6 +39,15 @@ mod tests {
         let fileuri = "./src/test.txt".to_string();
         let content = "test".to_string();
         assert_eq!(read_file(fileuri), content);
+    }
+
+    #[test]
+    fn test_save_file() {
+        let fileuri = "./src/test2.txt";
+        let content = "test";
+        assert_eq!(save_file(fileuri.to_string(), content.to_string()), 0);
+        assert_eq!(read_file(fileuri.to_string()), content.to_string());
+
     }
 
 }
