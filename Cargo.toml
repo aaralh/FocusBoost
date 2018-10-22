@@ -1,0 +1,6 @@
+[package]
+name = "FocusBoost"
+version = "0.1.0"
+authors = ["Aaro Alhainen <aaro.alhainen@gmail.com>"]
+
+[dependencies]
