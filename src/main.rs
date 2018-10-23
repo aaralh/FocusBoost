@@ -1,8 +1,8 @@
 use std::env;
+use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-
 
 fn read_file(fileuri: String) -> String {
     let path = Path::new(&fileuri);
@@ -21,7 +21,20 @@ fn read_file(fileuri: String) -> String {
 }
 
 fn save_file(fileuri: String, content: String) -> i8 {
-    return 1;
+
+    let path = Path::new(&fileuri);
+
+    let mut file = match File::create(&path) {
+        Err(_why) => return 1,
+        Ok(file) => file,
+    };
+
+    match file.write_all(content.as_bytes()) {
+        Err(_why) => {
+            return 0;
+        },
+        Ok(_) => return 0,
+    }
 }
 
 fn main() {
@@ -47,7 +60,7 @@ mod tests {
         let content = "test";
         assert_eq!(save_file(fileuri.to_string(), content.to_string()), 0);
         assert_eq!(read_file(fileuri.to_string()), content.to_string());
-
+        let _result = fs::remove_file(fileuri);
     }
 
 }
