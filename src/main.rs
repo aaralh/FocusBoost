@@ -5,6 +5,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 fn read_file(fileuri: String) -> String {
+    
     let path = Path::new(&fileuri);
 
     // Try open file. If no file found return empty string.
