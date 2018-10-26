@@ -18,6 +18,7 @@ pub struct ConfigJson {
     blocked_sites: Vec<String>,
 }
 
+// Is used to compare two different ConfigJsons together.
 impl PartialEq for ConfigJson {
     fn eq(&self, other: &ConfigJson) -> bool {
         self.hosts_file_location == other.hosts_file_location &&
@@ -25,32 +26,32 @@ impl PartialEq for ConfigJson {
     }
 }
 
+/**
+ * Read file contents and return them as string.
+ * If reading fails return empty string.
+ */
 fn read_file(fileuri: String) -> String {
-    
     let path = Path::new(&fileuri);
-
     // Try open file. If no file found return empty string.
     let mut f = match File::open(path) {
         Err(_why) => return String::new(),
         Ok(f) => f,
     };
-
     let mut contents = String::new();
     f.read_to_string(&mut contents)
         .expect("Something went wrong reading the file");
-
     return contents;
 }
 
+/**
+ * Save file and return 0 if success, otherwise 1.
+ */
 fn save_file(fileuri: String, content: String) -> i8 {
-
     let path = Path::new(&fileuri);
-
     let mut file = match File::create(&path) {
         Err(_why) => return 1,
         Ok(file) => file,
     };
-
     match file.write_all(content.as_bytes()) {
         Err(_why) => {
             return 0;
@@ -59,6 +60,9 @@ fn save_file(fileuri: String, content: String) -> i8 {
     }
 }
 
+/**
+ * Load config from file and cast it to ConfigJson type.
+ */
 fn load_config(configuri: String) -> ConfigJson {
     let config = read_file(configuri);
     let decoded: ConfigJson = serde_json::from_str(&config).unwrap();
