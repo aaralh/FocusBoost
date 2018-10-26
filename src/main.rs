@@ -60,13 +60,16 @@ fn save_file(fileuri: String, content: String) -> i8 {
 }
 
 fn load_config(configuri: String) -> ConfigJson {
-
+    let config = read_file(configuri);
+    let decoded: ConfigJson = serde_json::from_str(&config).unwrap();
+    return decoded;
 }
 
 fn main() {
     let fileuri = "./src/test.txt".to_string();
     let content = read_file(fileuri);
     println!("{}", content);
+    let _ = load_config("./src/config.json".to_string());
 }
 
 #[cfg(test)]
