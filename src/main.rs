@@ -4,6 +4,27 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+extern crate serde;
+extern crate serde_json;
+
+#[macro_use]
+extern crate serde_derive;
+
+use serde_json::Error;
+
+#[derive(Serialize, Deserialize)]
+pub struct ConfigJson {
+    hosts_file_location: String,
+    blocked_sites: Vec<String>,
+}
+
+impl PartialEq for ConfigJson {
+    fn eq(&self, other: &ConfigJson) -> bool {
+        self.hosts_file_location == other.hosts_file_location &&
+        self.blocked_sites == other.blocked_sites
+    }
+}
+
 fn read_file(fileuri: String) -> String {
     
     let path = Path::new(&fileuri);
@@ -38,6 +59,10 @@ fn save_file(fileuri: String, content: String) -> i8 {
     }
 }
 
+fn load_config(configuri: String) -> ConfigJson {
+
+}
+
 fn main() {
     let fileuri = "./src/test.txt".to_string();
     let content = read_file(fileuri);
@@ -62,6 +87,18 @@ mod tests {
         assert_eq!(save_file(fileuri.to_string(), content.to_string()), 0);
         assert_eq!(read_file(fileuri.to_string()), content.to_string());
         let _result = fs::remove_file(fileuri);
+    }
+
+    #[test]
+    fn load_configuration() {
+        let fileuri = "./src/config.json";
+        let mut vec = Vec::new();
+        vec.push("facebook.com".to_string());
+        let content = ConfigJson {
+                        hosts_file_location: "/etc/hosts".to_string(),
+                        blocked_sites: vec,
+                    };
+        assert!(load_config(fileuri.to_string()) == content);
     }
 
 }

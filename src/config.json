@@ -1,0 +1,4 @@
+{
+    "hosts_file_location": "/etc/hosts",
+    "blocked_sites": ["facebook.com"]
+}
