@@ -16,13 +16,17 @@ use serde_json::Error;
 pub struct ConfigJson {
     hosts_file_location: String,
     blocked_sites: Vec<String>,
+    start_blocking: String,
+    end_blocking: String,
 }
 
 // Is used to compare two different ConfigJsons together.
 impl PartialEq for ConfigJson {
     fn eq(&self, other: &ConfigJson) -> bool {
         self.hosts_file_location == other.hosts_file_location &&
-        self.blocked_sites == other.blocked_sites
+        self.blocked_sites == other.blocked_sites &&
+        self.start_blocking == other.start_blocking &&
+        self.end_blocking == other.end_blocking
     }
 }
 
@@ -69,6 +73,15 @@ fn load_config(configuri: &str) -> ConfigJson {
     return decoded;
 }
 
+/**
+ * Check if current time is in given time frame.
+ */
+fn check_time(start_time: &String, end_time: &String) -> bool {
+
+
+    return false;
+}
+
 fn main() {
     let config = load_config("./src/config.json");
     let hosts_file = read_file(config.hosts_file_location.as_str());
@@ -104,8 +117,16 @@ mod tests {
         let content = ConfigJson {
                         hosts_file_location: "/etc/hosts".to_string(),
                         blocked_sites: vec,
+                        start_blocking: "08:00".to_string(),
+                        end_blocking: "16:00".to_string(),
                     };
         assert!(load_config(fileuri) == content);
     }
-
+    
+    #[test]
+    fn test_check_time() {
+        let start_time = "08:00".to_string();
+        let end_time = "16:00".to_string();
+        assert_eq!(check_time(&start_time, &end_time), false);
+    }
 }
