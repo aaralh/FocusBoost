@@ -7,6 +7,9 @@ use std::path::Path;
 extern crate serde;
 extern crate serde_json;
 
+extern crate chrono;
+use chrono::{NaiveTime, Local};
+
 #[macro_use]
 extern crate serde_derive;
 
@@ -77,16 +80,18 @@ fn load_config(configuri: &str) -> ConfigJson {
  * Check if current time is in given time frame.
  */
 fn check_time(start_time: &String, end_time: &String) -> bool {
-
-
-    return false;
+    let begin = NaiveTime::parse_from_str(start_time, "%H:%M").unwrap();
+    let end = NaiveTime::parse_from_str(end_time, "%H:%M").unwrap();
+    let current = Local::now().time();
+    return (begin < current) && (current < end);
 }
 
 fn main() {
     let config = load_config("./src/config.json");
-    let hosts_file = read_file(config.hosts_file_location.as_str());
-    let _ = save_file("./src/hosts", &hosts_file);
-    print!("{}", &hosts_file);
+    //let hosts_file = read_file(config.hosts_file_location.as_str());
+    //let _ = save_file("./src/hosts", &hosts_file);
+    //print!("{}", &hosts_file);
+    let _ = check_time(&config.start_blocking, &config.end_blocking);
 }
 
 #[cfg(test)]
