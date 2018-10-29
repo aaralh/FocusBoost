@@ -2,5 +2,6 @@
     "hosts_file_location": "/etc/hosts",
     "blocked_sites": ["facebook.com"],
     "start_blocking": "08:00",
-    "end_blocking": "16:00"
+    "end_blocking": "20:00",
+    "sleep_time": 60
 }

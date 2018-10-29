@@ -3,6 +3,7 @@ use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::{thread, time};
 
 extern crate serde;
 extern crate serde_json;
@@ -21,6 +22,7 @@ pub struct ConfigJson {
     blocked_sites: Vec<String>,
     start_blocking: String,
     end_blocking: String,
+    sleep_time: u64,
 }
 
 // Is used to compare two different ConfigJsons together.
@@ -29,7 +31,8 @@ impl PartialEq for ConfigJson {
         self.hosts_file_location == other.hosts_file_location &&
         self.blocked_sites == other.blocked_sites &&
         self.start_blocking == other.start_blocking &&
-        self.end_blocking == other.end_blocking
+        self.end_blocking == other.end_blocking &&
+        self.sleep_time == other.sleep_time
     }
 }
 
@@ -88,10 +91,28 @@ fn check_time(start_time: &String, end_time: &String) -> bool {
 
 fn main() {
     let config = load_config("./src/config.json");
-    //let hosts_file = read_file(config.hosts_file_location.as_str());
-    //let _ = save_file("./src/hosts", &hosts_file);
-    //print!("{}", &hosts_file);
-    let _ = check_time(&config.start_blocking, &config.end_blocking);
+    let mut is_updated = false;
+
+    // Taking backup from original hosts file.
+    let hosts = read_file(&config.hosts_file_location);
+    let _ = save_file("./src/hosts", &hosts);
+    loop {
+        let in_frame = check_time(&config.start_blocking, &config.end_blocking);
+        if in_frame && !is_updated {
+            let mut hosts = read_file(&config.hosts_file_location).to_owned();
+            for website in &config.blocked_sites {
+                hosts.push_str(&format!("127.0.0.1\t{}", website));
+            }
+            let _ = save_file(&config.hosts_file_location, &hosts);
+            is_updated = true;
+        } else {
+            let hosts = read_file("./src/hosts").to_owned();
+            let _ = save_file(&config.hosts_file_location, &hosts);
+            is_updated = false;
+        }
+        let sleep_time = time::Duration::from_secs(config.sleep_time);
+        thread::sleep(sleep_time);
+    }
 }
 
 #[cfg(test)]
@@ -124,6 +145,7 @@ mod tests {
                         blocked_sites: vec,
                         start_blocking: "08:00".to_string(),
                         end_blocking: "16:00".to_string(),
+                        sleep_time: 60,
                     };
         assert!(load_config(fileuri) == content);
     }
