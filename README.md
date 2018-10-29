@@ -5,7 +5,7 @@ FocusBoost is interface to automatically edit your systems hosts file to forward
 1. Create `config.json` file in /src folder.
 
 Structure for config:
-```JSON
+```
 {
     "hosts_file_location": "/etc/hosts", // This is location for linux.
     "blocked_sites": ["domain.com"], // Urls in array which to block. 
@@ -17,3 +17,5 @@ Structure for config:
 
 2. Compile and run with`cargo run` command.
 3. Run compiled code.
+
+NOTE: Script is tested and working on linux. Code is free to use and I'm not liable if it takes your system down :D.
