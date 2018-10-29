@@ -1,5 +1,3 @@
-use std::env;
-use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -121,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_read_file() {
-        let fileuri = "./src/test.txt";
+        let fileuri = "./src/config.json";
         let content = "test".to_string();
         assert_eq!(read_file(fileuri), content);
     }
